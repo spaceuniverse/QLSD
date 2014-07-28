@@ -1,5 +1,3 @@
-__author__ = 'rhrub'
-
 import SandBoxTest as sb
 import numpy as np
 import sys

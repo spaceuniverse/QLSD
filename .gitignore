@@ -29,6 +29,7 @@ local.properties
 .buildpath
 
 # Private folders ^_^
+.idea/
 
 #################
 ## Visual Studio

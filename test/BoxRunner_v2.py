@@ -1,5 +1,3 @@
-__author__ = 'rhrub'
-
 import SandBoxTest as sb
 import sys
 from FUN import *
