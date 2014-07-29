@@ -1,4 +1,4 @@
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 import SandBoxTest as sb
 import numpy as np
@@ -28,7 +28,6 @@ while 1:
         features = getFeatures(state, P).reshape(-1, 1)
 
         Q = np.sum(W * features, axis=0)
-
 
         act_code = np.argmax(Q)
         act = actions[act_code]
@@ -62,26 +61,6 @@ while 1:
         #      + '-------'
         #if count > steps:
         #    break
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 '''
         if features[2]:

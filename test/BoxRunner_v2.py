@@ -50,7 +50,6 @@ while 1:
 
         W[:, act_code] = W[:, act_code] - alpha * derivative
 
-
         if not P.live:
             P = Box.getPlayer()
             actions = [P.incSpeedToUP, P.incSpeedToRIGHT, P.incSpeedToLEFT, P.incSpeedToDOWN]
