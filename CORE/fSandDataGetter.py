@@ -11,13 +11,15 @@ import time
 
 #---------------------------------------------------------------------# MAIN
 
+delay = 0.0
 
 box = allBox()
+
 while True:
     # if sys.stdin.read(1):
     if True:
         state = box.oneStep(draw=True).getStatus()
-        # time.sleep(0.1)
+        time.sleep(delay)
         # print state
 
 

@@ -70,27 +70,6 @@ while 1:
 
 print W
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 '''
         if features[2]:
             P.incSpeedToDOWN()

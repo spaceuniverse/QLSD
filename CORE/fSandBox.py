@@ -39,8 +39,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.live = True
         self.speed = np.array([-1, 0, 1, 2, -2])
-        self.bonusx = 0
-        self.bonusy = 0
+        self.bonusx = 0.0
+        self.bonusy = 0.0
         np.random.shuffle(self.speed)
         self.sandbox = sandbox
         self.rect.x = np.random.randint(0, self.sandbox.screen[0] - 20)
@@ -49,8 +49,11 @@ class Enemy(pygame.sprite.Sprite):
         self.fuel = 100.0
         self.ignition = np.array([0, 0])
         self.report = report
-        self.uptime = 0
+        self.uptime = 0.0
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
+        self.ignitionspeed = 0.1
+        self.ignitionstop = 0.05
+        self.vfield = 90.0
 
     def harassment(self, bullet):
         self.health = self.health - bullet.damage + (bullet.speed[0] - self.speed[0]) * 1.5 + (bullet.speed[1] -
@@ -97,49 +100,49 @@ class Enemy(pygame.sprite.Sprite):
             self.__shuffling_()
 
     def __move_00__(self):
-        self.ignition[0] -= 0.1
-        self.ignition[1] -= 0.1
+        self.ignition[0] -= self.ignitionspeed
+        self.ignition[1] -= self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_01__(self):
-        self.ignition[1] -= 0.1
+        self.ignition[1] -= self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_02__(self):
-        self.ignition[0] += 0.1
-        self.ignition[1] -= 0.1
+        self.ignition[0] += self.ignitionspeed
+        self.ignition[1] -= self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_10__(self):
-        self.ignition[0] -= 0.1
+        self.ignition[0] -= self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_11__(self):
         self.__clipSpeed__()
 
     def __move_12__(self):
-        self.ignition[0] += 0.1
+        self.ignition[0] += self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_20__(self):
-        self.ignition[0] -= 0.1
-        self.ignition[1] += 0.1
+        self.ignition[0] -= self.ignitionspeed
+        self.ignition[1] += self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_21__(self):
-        self.ignition[1] += 0.1
+        self.ignition[1] += self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_22__(self):
-        self.ignition[0] += 0.1
-        self.ignition[1] += 0.1
+        self.ignition[0] += self.ignitionspeed
+        self.ignition[1] += self.ignitionspeed
         self.__clipSpeed__()
 
     def __stop__(self):
-        self.ignition = np.array([0, 0])
+        self.ignition = np.clip(self.ignition - np.array([self.ignitionstop, self.ignitionstop]), 0.0, 0.0)
 
     def __clipSpeed__(self):
-        self.ignition = np.clip(self.ignition, -7.0, 7.0)
+        self.ignition = np.clip(self.ignition, -11.0, 11.0)
 
     def move(self):
         self.rect.x = self.rect.x + self.speed[0] + self.bonusx + self.ignition[0]
@@ -171,28 +174,31 @@ class Player(Enemy):
         elif type == "heal":
             t = 1
         for block in list:
-            if self.rect.x - 50 < block.rect.x < self.rect.x and self.rect.y - 50 < block.rect.y < self.rect.y:
+            if self.rect.x - self.vfield < block.rect.x < self.rect.x and self.rect.y - self.vfield < block.rect.y < self.rect.y:
                 self.environment[t][0][0] += 1
-            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y - 50 < block.rect.y < self.rect.y:
+            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y - self.vfield < block.rect.y < self.rect.y:
                 self.environment[t][0][1] += 1
-            if self.rect.x + 20 < block.rect.x < self.rect.x + 70 and self.rect.y - 50 < block.rect.y < self.rect.y:
+            if self.rect.x + 20 < block.rect.x < self.rect.x + 20 + self.vfield and self.rect.y - self.vfield < block.rect.y < self.rect.y:
                 self.environment[t][0][2] += 1
-            if self.rect.x - 50 < block.rect.x < self.rect.x and self.rect.y < block.rect.y < self.rect.y + 20:
+            if self.rect.x - self.vfield < block.rect.x < self.rect.x and self.rect.y < block.rect.y < self.rect.y + 20:
                 self.environment[t][1][0] += 1
             # if block.rect.x > self.rect.x
             # and block.rect.y > self.rect.y
             # and block.rect.x < self.rect.x + 20
             # and block.rect.y < self.rect.y + 20:
             # self.environment[t][1][1] += 1
-            if self.rect.x + 20 < block.rect.x < self.rect.x + 70 and self.rect.y < block.rect.y < self.rect.y + 20:
+            if self.rect.x + 20 < block.rect.x < self.rect.x + 20 + self.vfield and self.rect.y < block.rect.y < self.rect.y + 20:
                 self.environment[t][1][2] += 1
-            if self.rect.x - 50 < block.rect.x < self.rect.x and self.rect.y + 20 < block.rect.y < self.rect.y + 70:
+            if self.rect.x - self.vfield < block.rect.x < self.rect.x and self.rect.y + 20 < block.rect.y < self.rect.y + 20 + self.vfield:
                 self.environment[t][2][0] += 1
-            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y + 20 < block.rect.y < self.rect.y + 70:
+            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y + 20 < block.rect.y < self.rect.y + 20 + self.vfield:
                 self.environment[t][2][1] += 1
-            if self.rect.x + 20 < block.rect.x < self.rect.x + 70 and self.rect.y + 20 < block.rect.y < self.rect.y + 70:
+            if self.rect.x + 20 < block.rect.x < self.rect.x + 20 + self.vfield and self.rect.y + 20 < block.rect.y < self.rect.y + 20 + self.vfield:
                 self.environment[t][2][2] += 1
-            # if self.report: print "\n", self.environment, "\n"
+            #
+            #if self.report:
+            #    print "\n", self.environment, "\n"
+            #
 
     def clean(self):
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
