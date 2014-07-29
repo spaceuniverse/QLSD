@@ -1,14 +1,22 @@
-# ---------------------------------------------------------------------#
+# ---------------------------------------------------------------------# IMPORTS
+
+
 import sys
 import pygame
 import numpy as np
 from numpy import *
-# ---------------------------------------------------------------------#
+
+
+# ---------------------------------------------------------------------# CONSTANTS
+
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-# ---------------------------------------------------------------------#
+
+
+#---------------------------------------------------------------------#
 
 
 class Sand(object):
@@ -61,7 +69,8 @@ class Enemy(pygame.sprite.Sprite):
 
     def death(self):
         self.live = False
-        if self.report: print self.live, self.statusreport()
+        if self.report:
+            print self.live, self.statusreport()
 
     def fire(self):
         bullet = Bullet(self.sandbox, self.rect.x, self.rect.y)
@@ -146,6 +155,8 @@ class Enemy(pygame.sprite.Sprite):
 
 
 #---------------------------------------------------------------------#
+
+
 class Player(Enemy):
     def statusreport(self):
         status = {"environment": self.environment, "class": "blockplayer", "x_position": self.rect.x,
@@ -160,25 +171,28 @@ class Player(Enemy):
         elif type == "heal":
             t = 1
         for block in list:
-            if block.rect.x > self.rect.x - 50 and block.rect.y > self.rect.y - 50 and block.rect.x < self.rect.x and block.rect.y < self.rect.y:
+            if self.rect.x - 50 < block.rect.x < self.rect.x and self.rect.y - 50 < block.rect.y < self.rect.y:
                 self.environment[t][0][0] += 1
-            if block.rect.x > self.rect.x and block.rect.y > self.rect.y - 50 and block.rect.x < self.rect.x + 20 and block.rect.y < self.rect.y:
+            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y - 50 < block.rect.y < self.rect.y:
                 self.environment[t][0][1] += 1
-            if block.rect.x > self.rect.x + 20 and block.rect.y > self.rect.y - 50 and block.rect.x < self.rect.x + 70 and block.rect.y < self.rect.y:
+            if self.rect.x + 20 < block.rect.x < self.rect.x + 70 and self.rect.y - 50 < block.rect.y < self.rect.y:
                 self.environment[t][0][2] += 1
-            if block.rect.x > self.rect.x - 50 and block.rect.y > self.rect.y and block.rect.x < self.rect.x and block.rect.y < self.rect.y + 20:
+            if self.rect.x - 50 < block.rect.x < self.rect.x and self.rect.y < block.rect.y < self.rect.y + 20:
                 self.environment[t][1][0] += 1
-            # if block.rect.x > self.rect.x and block.rect.y > self.rect.y and block.rect.x < self.rect.x + 20 and block.rect.y < self.rect.y + 20:
-            #	self.environment[t][1][1] += 1
-            if block.rect.x > self.rect.x + 20 and block.rect.y > self.rect.y and block.rect.x < self.rect.x + 70 and block.rect.y < self.rect.y + 20:
+            # if block.rect.x > self.rect.x
+            # and block.rect.y > self.rect.y
+            # and block.rect.x < self.rect.x + 20
+            # and block.rect.y < self.rect.y + 20:
+            # self.environment[t][1][1] += 1
+            if self.rect.x + 20 < block.rect.x < self.rect.x + 70 and self.rect.y < block.rect.y < self.rect.y + 20:
                 self.environment[t][1][2] += 1
-            if block.rect.x > self.rect.x - 50 and block.rect.y > self.rect.y + 20 and block.rect.x < self.rect.x and block.rect.y < self.rect.y + 70:
+            if self.rect.x - 50 < block.rect.x < self.rect.x and self.rect.y + 20 < block.rect.y < self.rect.y + 70:
                 self.environment[t][2][0] += 1
-            if block.rect.x > self.rect.x and block.rect.y > self.rect.y + 20 and block.rect.x < self.rect.x + 20 and block.rect.y < self.rect.y + 70:
+            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y + 20 < block.rect.y < self.rect.y + 70:
                 self.environment[t][2][1] += 1
-            if block.rect.x > self.rect.x + 20 and block.rect.y > self.rect.y + 20 and block.rect.x < self.rect.x + 70 and block.rect.y < self.rect.y + 70:
+            if self.rect.x + 20 < block.rect.x < self.rect.x + 70 and self.rect.y + 20 < block.rect.y < self.rect.y + 70:
                 self.environment[t][2][2] += 1
-                # if self.report: print "\n", self.environment, "\n"
+            # if self.report: print "\n", self.environment, "\n"
 
     def clean(self):
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
@@ -195,6 +209,8 @@ class Player(Enemy):
 
 
 #---------------------------------------------------------------------#
+
+
 class Health(pygame.sprite.Sprite):
     def __init__(self, sandbox):
         pygame.sprite.Sprite.__init__(self)
@@ -224,6 +240,8 @@ class Health(pygame.sprite.Sprite):
 
 
 #---------------------------------------------------------------------#
+
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, sandbox, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -267,6 +285,8 @@ class Bullet(pygame.sprite.Sprite):
 
 
 #---------------------------------------------------------------------#
+
+
 class Collision(object):
     @staticmethod
     def test(list, obj, type="none"):
@@ -283,6 +303,8 @@ class Collision(object):
 
 
 #---------------------------------------------------------------------#
+
+
 class Agent(object):
     @staticmethod
     def create(sand):
@@ -292,15 +314,19 @@ class Agent(object):
 
 
 #---------------------------------------------------------------------#
+
+
 class Cleaner(object):
     @staticmethod
     def clean(list):
         for block in list:
-            if block.live == False:
+            if block.live is False:
                 list.remove(block)
 
 
 #---------------------------------------------------------------------#
+
+
 class Global(object):
     @staticmethod
     def report(list):
@@ -354,13 +380,13 @@ class allBox(object):
         Cleaner.clean(self.all_list)
         Cleaner.clean(self.bullet_list)
         Cleaner.clean(self.health_list)
-        if self.agent.live == False:
+        if self.agent.live is False:
             self.all_list.remove(self.agent)
             self.agent = Agent.create(self.sand)
             self.all_list.add(self.agent)
         self.all_list.draw(self.window)
-        if self.sand.report: print len(self.all_list), len(self.enemy_list), len(self.bullet_list), len(
-            self.health_list)
+        if self.sand.report:
+            print len(self.all_list), len(self.enemy_list), len(self.bullet_list), len(self.health_list)
         for block in self.all_list:
             block.move()
         if draw:
@@ -373,4 +399,6 @@ class allBox(object):
 
     def getStatus(self):
         return Global.report(self.all_list)
-        #---------------------------------------------------------------------#
+
+
+#---------------------------------------------------------------------#

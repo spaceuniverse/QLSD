@@ -1,6 +1,10 @@
+#---------------------------------------------------------------------#
+
 import numpy as np
+
 #---------------------------------------------------------------------#
 oldHealth = None
+
 
 def itThereWallDOWN(status, player, z):
     answer = 0
@@ -222,7 +226,7 @@ def getFeaturesForReward(s, f):
     for o in s:
         if o['class'] == 'blockplayer':
             playerHealth = o['health']
-            if oldHealth == None:
+            if oldHealth is None:
                 oldHealth = playerHealth
             else:
                 if oldHealth > playerHealth:
