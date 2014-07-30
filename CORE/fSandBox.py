@@ -34,7 +34,9 @@ class Sand(object):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, sandbox, color=WHITE, report=False):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((20, 20))
+        self.width = 20
+        self.height = 20
+        self.image = pygame.Surface((self.width, self.height))
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.live = True
@@ -43,17 +45,17 @@ class Enemy(pygame.sprite.Sprite):
         self.bonusy = 0.0
         np.random.shuffle(self.speed)
         self.sandbox = sandbox
-        self.rect.x = np.random.randint(0, self.sandbox.screen[0] - 20)
-        self.rect.y = np.random.randint(0, self.sandbox.screen[1] - 20)
+        self.rect.x = np.random.randint(0, self.sandbox.screen[0] - self.width)
+        self.rect.y = np.random.randint(0, self.sandbox.screen[1] - self.height)
         self.health = 100.0
         self.fuel = 100.0
-        self.ignition = np.array([0, 0])
+        self.ignition = np.array([0.0, 0.0])
         self.report = report
         self.uptime = 0.0
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
         self.ignitionspeed = 0.1
-        self.ignitionstop = 0.05
-        self.vfield = 90.0
+        self.ignitionstop = 0.1
+        self.vfield = 50.0
 
     def harassment(self, bullet):
         self.health = self.health - bullet.damage + (bullet.speed[0] - self.speed[0]) * 1.5 + (bullet.speed[1] -
@@ -86,14 +88,14 @@ class Enemy(pygame.sprite.Sprite):
         self.__stop__()
 
     def __wall__(self):
-        if self.rect.x > self.sandbox.screen[0] - 20:
-            self.rect.x = self.sandbox.screen[0] - 20
+        if self.rect.x > self.sandbox.screen[0] - self.width:
+            self.rect.x = self.sandbox.screen[0] - self.width
             self.__shuffling_()
         if self.rect.x < 0:
             self.rect.x = 0
             self.__shuffling_()
-        if self.rect.y > self.sandbox.screen[1] - 20:
-            self.rect.y = self.sandbox.screen[1] - 20
+        if self.rect.y > self.sandbox.screen[1] - self.height:
+            self.rect.y = self.sandbox.screen[1] - self.height
             self.__shuffling_()
         if self.rect.y < 0:
             self.rect.y = 0
@@ -139,7 +141,17 @@ class Enemy(pygame.sprite.Sprite):
         self.__clipSpeed__()
 
     def __stop__(self):
-        self.ignition = np.clip(self.ignition - np.array([self.ignitionstop, self.ignitionstop]), 0.0, 0.0)
+        #if self.report:
+        #    print self.ignition, "\n"
+        if np.absolute(self.ignition[0]) >= self.ignitionstop:
+            self.ignition[0] = self.ignition[0] + (-1) * np.sign(self.ignition[0]) * self.ignitionstop
+        else:
+            self.ignition[0] = 0.0
+        if np.absolute(self.ignition[1]) >= self.ignitionstop:
+            self.ignition[1] = self.ignition[1] + (-1) * np.sign(self.ignition[1]) * self.ignitionstop
+        else:
+            self.ignition[1] = 0.0
+        # self.ignition = np.clip(self.ignition - np.array([self.ignitionstop, self.ignitionstop]), 0.0, 0.0)
 
     def __clipSpeed__(self):
         self.ignition = np.clip(self.ignition, -11.0, 11.0)
@@ -147,6 +159,9 @@ class Enemy(pygame.sprite.Sprite):
     def move(self):
         self.rect.x = self.rect.x + self.speed[0] + self.bonusx + self.ignition[0]
         self.rect.y = self.rect.y + self.speed[1] + self.bonusy + self.ignition[1]
+        #if self.report:
+        #    print self.speed[0], self.bonusx, self.ignition[0], "---", self.speed[0] + self.bonusx + self.ignition[0]
+        #    print self.speed[1], self.bonusy, self.ignition[1], "---", self.speed[1] + self.bonusy + self.ignition[1]
         self.uptime = self.uptime + 0.01
         self.__wall__()
 
@@ -174,31 +189,29 @@ class Player(Enemy):
         elif type == "heal":
             t = 1
         for block in list:
-            if self.rect.x - self.vfield < block.rect.x < self.rect.x and self.rect.y - self.vfield < block.rect.y < self.rect.y:
+            if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y - self.vfield <= block.rect.y < self.rect.y:
                 self.environment[t][0][0] += 1
-            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y - self.vfield < block.rect.y < self.rect.y:
+            if self.rect.x <= block.rect.x < self.rect.x + self.width and self.rect.y - self.vfield <= block.rect.y < self.rect.y:
                 self.environment[t][0][1] += 1
-            if self.rect.x + 20 < block.rect.x < self.rect.x + 20 + self.vfield and self.rect.y - self.vfield < block.rect.y < self.rect.y:
+            if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y - self.vfield <= block.rect.y < self.rect.y:
                 self.environment[t][0][2] += 1
-            if self.rect.x - self.vfield < block.rect.x < self.rect.x and self.rect.y < block.rect.y < self.rect.y + 20:
+            if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y <= block.rect.y < self.rect.y + self.height:
                 self.environment[t][1][0] += 1
             # if block.rect.x > self.rect.x
             # and block.rect.y > self.rect.y
             # and block.rect.x < self.rect.x + 20
             # and block.rect.y < self.rect.y + 20:
             # self.environment[t][1][1] += 1
-            if self.rect.x + 20 < block.rect.x < self.rect.x + 20 + self.vfield and self.rect.y < block.rect.y < self.rect.y + 20:
+            if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y <= block.rect.y < self.rect.y + self.height:
                 self.environment[t][1][2] += 1
-            if self.rect.x - self.vfield < block.rect.x < self.rect.x and self.rect.y + 20 < block.rect.y < self.rect.y + 20 + self.vfield:
+            if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
                 self.environment[t][2][0] += 1
-            if self.rect.x < block.rect.x < self.rect.x + 20 and self.rect.y + 20 < block.rect.y < self.rect.y + 20 + self.vfield:
+            if self.rect.x <= block.rect.x < self.rect.x + self.width and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
                 self.environment[t][2][1] += 1
-            if self.rect.x + 20 < block.rect.x < self.rect.x + 20 + self.vfield and self.rect.y + 20 < block.rect.y < self.rect.y + 20 + self.vfield:
+            if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
                 self.environment[t][2][2] += 1
-            #
             #if self.report:
             #    print "\n", self.environment, "\n"
-            #
 
     def clean(self):
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
@@ -210,8 +223,8 @@ class Player(Enemy):
         if np.sum(self.environment[1]) == 0:
             decision = 9
         actions[decision]()
-
-        # if self.report: print "\n", decision, "\n"
+        #if self.report:
+        #    print "\n", decision, "\n"
 
 
 #---------------------------------------------------------------------#
@@ -220,13 +233,15 @@ class Player(Enemy):
 class Health(pygame.sprite.Sprite):
     def __init__(self, sandbox):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((5, 5))
+        self.width = 5
+        self.height = 5
+        self.image = pygame.Surface((self.width, self.height))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.live = True
         self.sandbox = sandbox
-        self.rect.x = np.random.randint(0, self.sandbox.screen[0] - 5)
-        self.rect.y = np.random.randint(0, self.sandbox.screen[1] - 5)
+        self.rect.x = np.random.randint(0, self.sandbox.screen[0] - self.width)
+        self.rect.y = np.random.randint(0, self.sandbox.screen[1] - self.height)
         self.heal = 5.0
         self.ttl = 500
 
@@ -251,29 +266,31 @@ class Health(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, sandbox, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((5, 5))
+        self.width = 5
+        self.height = 5
+        self.image = pygame.Surface((self.width, self.height))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.live = True
         self.speed = np.array([-5, 5, 0, 4, -4, 3, -3, 2, -2, 1, -1])
         np.random.shuffle(self.speed)
         self.sandbox = sandbox
-        self.rect.x = x + 8
-        self.rect.y = y + 8
+        self.rect.x = x  # + 8
+        self.rect.y = y  # + 8
         self.damage = 10.0 + 6.5 * np.maximum(np.absolute(self.speed[0]), np.absolute(self.speed[1]))
 
     def death(self):
         self.live = False
 
     def __wall__(self):
-        if self.rect.x > self.sandbox.screen[0] - 5:
-            self.rect.x = self.sandbox.screen[0] - 5
+        if self.rect.x > self.sandbox.screen[0] - self.width:
+            self.rect.x = self.sandbox.screen[0] - self.width
             self.death()
         if self.rect.x < 0:
             self.rect.x = 0
             self.death()
-        if self.rect.y > self.sandbox.screen[1] - 5:
-            self.rect.y = self.sandbox.screen[1] - 5
+        if self.rect.y > self.sandbox.screen[1] - self.height:
+            self.rect.y = self.sandbox.screen[1] - self.height
             self.death()
         if self.rect.y < 0:
             self.rect.y = 0
@@ -299,8 +316,8 @@ class Collision(object):
         for block in list:
             if block.rect.x > obj.rect.x:
                 if block.rect.y > obj.rect.y:
-                    if block.rect.x < obj.rect.x + 20:
-                        if block.rect.y < obj.rect.y + 20:
+                    if block.rect.x < obj.rect.x + obj.width:
+                        if block.rect.y < obj.rect.y + obj.height:
                             block.death()
                             if type == "hit":
                                 obj.harassment(block)
@@ -314,7 +331,7 @@ class Collision(object):
 class Agent(object):
     @staticmethod
     def create(sand):
-        random = (np.random.randint(10, 255), np.random.randint(50, 255), np.random.randint(100, 255))
+        random = (np.random.randint(50, 100), np.random.randint(50, 100), np.random.randint(200, 250))
         agent = Player(sand, random, report=True)
         return agent
 
