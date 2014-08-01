@@ -14,6 +14,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
 
 #---------------------------------------------------------------------#
@@ -32,10 +33,10 @@ class Sand(object):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, sandbox, color=WHITE, report=False):
+    def __init__(self, sandbox, color=WHITE, report=False, width=20, height=20):
         pygame.sprite.Sprite.__init__(self)
-        self.width = 20
-        self.height = 20
+        self.width = width
+        self.height = height
         self.image = pygame.Surface((self.width, self.height))
         self.image.fill(color)
         self.rect = self.image.get_rect()
@@ -53,7 +54,7 @@ class Enemy(pygame.sprite.Sprite):
         self.report = report
         self.uptime = 0.0
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
-        self.ignitionspeed = 0.1
+        self.ignitionspeed = 0.5
         self.ignitionstop = 0.1
         self.vfield = 50.0
 
@@ -176,6 +177,9 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Player(Enemy):
+    def __init__(self, sandbox, color=BLUE, report=False, width=15, height=15):
+        super(Player, self).__init__(sandbox, color, report, width, height)
+
     def statusreport(self):
         status = {"environment": self.environment, "class": "blockplayer", "x_position": self.rect.x,
                   "y_position": self.rect.y, "x_speed": self.speed[0], "y_speed": self.speed[1],
@@ -197,11 +201,8 @@ class Player(Enemy):
                 self.environment[t][0][2] += 1
             if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y <= block.rect.y < self.rect.y + self.height:
                 self.environment[t][1][0] += 1
-            # if block.rect.x > self.rect.x
-            # and block.rect.y > self.rect.y
-            # and block.rect.x < self.rect.x + 20
-            # and block.rect.y < self.rect.y + 20:
-            # self.environment[t][1][1] += 1
+            #if self.rect.x <= block.rect.x < self.rect.x + self.width and self.rect.y <= block.rect.y < self.rect.y + self.height:
+            #    self.environment[t][1][1] += 1
             if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y <= block.rect.y < self.rect.y + self.height:
                 self.environment[t][1][2] += 1
             if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
@@ -219,10 +220,11 @@ class Player(Enemy):
     def brain(self):
         actions = [self.__move_00__, self.__move_01__, self.__move_02__, self.__move_10__, self.__move_11__,
                    self.__move_12__, self.__move_20__, self.__move_21__, self.__move_22__, self.__stop__]
-        decision = np.argmax(self.environment[1])
+        decision_heal = np.argmax(self.environment[1])
+        decision_bullet = np.argmin(self.environment[0])
         if np.sum(self.environment[1]) == 0:
-            decision = 9
-        actions[decision]()
+            decision_heal = 9
+        actions[decision_heal]()
         #if self.report:
         #    print "\n", decision, "\n"
 
