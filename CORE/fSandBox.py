@@ -217,16 +217,19 @@ class Player(Enemy):
     def clean(self):
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
 
-    def brain(self):
+    def brain(self, type="none"):
         actions = [self.__move_00__, self.__move_01__, self.__move_02__, self.__move_10__, self.__move_11__,
                    self.__move_12__, self.__move_20__, self.__move_21__, self.__move_22__, self.__stop__]
         decision_heal = np.argmax(self.environment[1])
-        decision_bullet = np.argmin(self.environment[0])
-        if np.sum(self.environment[1]) == 0:
-            decision_heal = 9
-        actions[decision_heal]()
-        #if self.report:
-        #    print "\n", decision, "\n"
+        decision_bullet = np.argmax(self.environment[0])
+        decision = 9
+        if type == "healcatch":
+            if np.sum(self.environment[1]) != 0:
+                decision = decision_heal
+        elif type == "bulletdodge":
+            if np.sum(self.environment[0]) != 0:
+                decision = 8 - decision_bullet
+        actions[decision]()
 
 
 #---------------------------------------------------------------------#
@@ -399,7 +402,8 @@ class allBox(object):
         self.agent.clean()
         self.agent.scan(self.bullet_list, type="hit")
         self.agent.scan(self.health_list, type="heal")
-        self.agent.brain()
+        self.agent.brain(type="healcatch")
+        self.agent.brain(type="bulletdodge")
         Collision.test(self.bullet_list, self.agent, type="hit")
         Collision.test(self.health_list, self.agent, type="heal")
         Cleaner.clean(self.all_list)
