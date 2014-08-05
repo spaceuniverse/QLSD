@@ -1,5 +1,7 @@
 Q-learning sandbox
 
+-----------------------------------------------------------------------------
+
 Files:
 - fSandDataGetter.py - loop which produces one step in the sandbox world
 - fSandBox.py - main class contains all sandbox world and creatures

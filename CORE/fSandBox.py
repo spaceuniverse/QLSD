@@ -142,8 +142,6 @@ class Enemy(pygame.sprite.Sprite):
         self.__clipSpeed__()
 
     def __stop__(self):
-        #if self.report:
-        #    print self.ignition, "\n"
         if np.absolute(self.ignition[0]) >= self.ignitionstop:
             self.ignition[0] = self.ignition[0] + (-1) * np.sign(self.ignition[0]) * self.ignitionstop
         else:
@@ -152,7 +150,7 @@ class Enemy(pygame.sprite.Sprite):
             self.ignition[1] = self.ignition[1] + (-1) * np.sign(self.ignition[1]) * self.ignitionstop
         else:
             self.ignition[1] = 0.0
-        # self.ignition = np.clip(self.ignition - np.array([self.ignitionstop, self.ignitionstop]), 0.0, 0.0)
+        #self.ignition = np.clip(self.ignition - np.array([self.ignitionstop, self.ignitionstop]), 0.0, 0.0)
 
     def __clipSpeed__(self):
         self.ignition = np.clip(self.ignition, -11.0, 11.0)
@@ -187,7 +185,7 @@ class Player(Enemy):
                   "uptime": self.uptime}
         return status
 
-    def scan(self, list, type="none"):
+    def scan(self, list, type=None):
         if type == "hit":
             t = 0
         elif type == "heal":
@@ -211,24 +209,20 @@ class Player(Enemy):
                 self.environment[t][2][1] += 1
             if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
                 self.environment[t][2][2] += 1
-            #if self.report:
-            #    print "\n", self.environment, "\n"
 
     def clean(self):
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
 
-    def brain(self, type="none"):
+    def brain(self, type=None):
         actions = [self.__move_00__, self.__move_01__, self.__move_02__, self.__move_10__, self.__move_11__,
                    self.__move_12__, self.__move_20__, self.__move_21__, self.__move_22__, self.__stop__]
         decision_heal = np.argmax(self.environment[1])
         decision_bullet = np.argmax(self.environment[0])
         decision = 9
-        if type == "healcatch":
-            if np.sum(self.environment[1]) != 0:
-                decision = decision_heal
-        elif type == "bulletdodge":
-            if np.sum(self.environment[0]) != 0:
-                decision = 8 - decision_bullet
+        if type == "healcatch" and np.sum(self.environment[1]) != 0:
+            decision = decision_heal
+        elif type == "bulletdodge" and np.sum(self.environment[0]) != 0:
+            decision = 8 - decision_bullet
         actions[decision]()
 
 
@@ -317,7 +311,7 @@ class Bullet(pygame.sprite.Sprite):
 
 class Collision(object):
     @staticmethod
-    def test(list, obj, type="none"):
+    def test(list, obj, type=None):
         for block in list:
             if block.rect.x > obj.rect.x:
                 if block.rect.y > obj.rect.y:
@@ -383,7 +377,7 @@ class allBox(object):
         self.clock = pygame.time.Clock()
         self.brain = np.array(range(self.sand.firerate))
 
-    def oneStep(self, draw=True):
+    def oneStep(self, draw=True, brainType=None):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit(0)
@@ -402,8 +396,9 @@ class allBox(object):
         self.agent.clean()
         self.agent.scan(self.bullet_list, type="hit")
         self.agent.scan(self.health_list, type="heal")
-        self.agent.brain(type="healcatch")
-        self.agent.brain(type="bulletdodge")
+        if brainType == "ifelse":
+            self.agent.brain(type="healcatch")
+            self.agent.brain(type="bulletdodge")
         Collision.test(self.bullet_list, self.agent, type="hit")
         Collision.test(self.health_list, self.agent, type="heal")
         Cleaner.clean(self.all_list)

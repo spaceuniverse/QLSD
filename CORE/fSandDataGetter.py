@@ -18,7 +18,7 @@ box = allBox()
 while True:
     #if sys.stdin.read(1):
     if True:
-        state = box.oneStep(draw=True).getStatus()
+        state = box.oneStep(draw=True, brainType="ifelse").getStatus()
         agent_state = (item for item in state if item["class"] == "blockplayer").next()
         time.sleep(delay)
         #print agent_state
