@@ -176,6 +176,8 @@ class Enemy(pygame.sprite.Sprite):
 
 class Player(Enemy):
     def __init__(self, sandbox, color=BLUE, report=False, width=15, height=15):
+        self.actions = [self.__move_00__, self.__move_01__, self.__move_02__, self.__move_10__, self.__move_11__,
+                        self.__move_12__, self.__move_20__, self.__move_21__, self.__move_22__, self.__stop__]
         super(Player, self).__init__(sandbox, color, report, width, height)
 
     def statusreport(self):
@@ -214,8 +216,6 @@ class Player(Enemy):
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
 
     def brain(self, type=None):
-        actions = [self.__move_00__, self.__move_01__, self.__move_02__, self.__move_10__, self.__move_11__,
-                   self.__move_12__, self.__move_20__, self.__move_21__, self.__move_22__, self.__stop__]
         decision_heal = np.argmax(self.environment[1])
         decision_bullet = np.argmax(self.environment[0])
         decision = 9
@@ -223,7 +223,7 @@ class Player(Enemy):
             decision = decision_heal
         elif type == "bulletdodge" and np.sum(self.environment[0]) != 0:
             decision = 8 - decision_bullet
-        actions[decision]()
+        self.actions[decision]()
 
 
 #---------------------------------------------------------------------#
@@ -359,6 +359,8 @@ class Global(object):
 
 
 #---------------------------------------------------------------------#
+
+
 class allBox(object):
     def __init__(self):
         pygame.init()
