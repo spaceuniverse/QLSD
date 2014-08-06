@@ -330,10 +330,10 @@ class Collision(object):
     @staticmethod
     def test(list, obj, type=None):
         for block in list:
-            if block.rect.x > obj.rect.x:
-                if block.rect.y > obj.rect.y:
-                    if block.rect.x < obj.rect.x + obj.width:
-                        if block.rect.y < obj.rect.y + obj.height:
+            if block.rect.x >= obj.rect.x:
+                if block.rect.y >= obj.rect.y:
+                    if block.rect.x <= obj.rect.x + obj.width:
+                        if block.rect.y <= obj.rect.y + obj.height:
                             block.death()
                             if type == "hit":
                                 obj.harassment(block)
