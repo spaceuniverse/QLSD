@@ -1,14 +1,13 @@
 # ---------------------------------------------------------------------# IMPORTS
 
 
-import sys
+import time
 import pygame
 import numpy as np
 from numpy import *
 from fSandBox import *
 from fSandFun import *
 from fSandController import *
-import time
 
 
 # ---------------------------------------------------------------------# MAIN

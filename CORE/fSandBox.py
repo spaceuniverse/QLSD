@@ -401,6 +401,23 @@ class allBox(object):
             if event.type == pygame.QUIT:
                 sys.exit(0)
         self.window.fill(BLACK)
+        Cleaner.clean(self.all_list)
+        Cleaner.clean(self.bullet_list)
+        Cleaner.clean(self.health_list)
+        if self.agent.live is False:
+            self.all_list.remove(self.agent)
+            self.agent = Agent.create(self.sand)
+            self.all_list.add(self.agent)
+        self.agent.clean()
+        self.agent.scan(self.bullet_list, type="hit")
+        self.agent.scan(self.health_list, type="heal")
+        if brainType == "ifelse":
+            self.agent.brain(type="healcatch")
+            self.agent.brain(type="bulletdodge")
+        for block in self.all_list:
+            block.move()
+        Collision.test(self.bullet_list, self.agent, type="hit")
+        Collision.test(self.health_list, self.agent, type="heal")
         for block in self.enemy_list:
             np.random.shuffle(self.brain)
             if self.brain[0] == 0:
@@ -412,26 +429,9 @@ class allBox(object):
             apt = Health(self.sand)
             self.health_list.append(apt)
             self.all_list.add(apt)
-        self.agent.clean()
-        self.agent.scan(self.bullet_list, type="hit")
-        self.agent.scan(self.health_list, type="heal")
-        if brainType == "ifelse":
-            self.agent.brain(type="healcatch")
-            self.agent.brain(type="bulletdodge")
-        Collision.test(self.bullet_list, self.agent, type="hit")
-        Collision.test(self.health_list, self.agent, type="heal")
-        Cleaner.clean(self.all_list)
-        Cleaner.clean(self.bullet_list)
-        Cleaner.clean(self.health_list)
-        if self.agent.live is False:
-            self.all_list.remove(self.agent)
-            self.agent = Agent.create(self.sand)
-            self.all_list.add(self.agent)
         self.all_list.draw(self.window)
         if self.sand.report:
             print len(self.all_list), len(self.enemy_list), len(self.bullet_list), len(self.health_list)
-        for block in self.all_list:
-            block.move()
         if draw:
             self.clock.tick(60)
             pygame.display.update()
