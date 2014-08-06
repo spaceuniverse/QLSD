@@ -7,11 +7,13 @@ import numpy as np
 from numpy import *
 from fSandBox import *
 from fSandFun import *
+from fSandController import *
 import time
 
 
 # ---------------------------------------------------------------------# MAIN
 # brainType == "ifelse" for comparing with Q
+
 
 delay = 0.0
 box = allBox()
