@@ -429,9 +429,9 @@ class allBox(object):
             apt = Health(self.sand)
             self.health_list.append(apt)
             self.all_list.add(apt)
-        self.all_list.draw(self.window)
         if self.sand.report:
             print len(self.all_list), len(self.enemy_list), len(self.bullet_list), len(self.health_list)
+        self.all_list.draw(self.window)
         if draw:
             self.clock.tick(60)
             pygame.display.update()
