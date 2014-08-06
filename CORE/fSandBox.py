@@ -17,7 +17,7 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Sand(object):
@@ -29,7 +29,7 @@ class Sand(object):
         self.report = False
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -49,6 +49,9 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = np.random.randint(0, self.sandbox.screen[0] - self.width)
         self.rect.y = np.random.randint(0, self.sandbox.screen[1] - self.height)
         self.health = 100.0
+        self.hMonitor = self.health
+        self.hPlus = False
+        self.hMinus = False
         self.fuel = 100.0
         self.ignition = np.array([0.0, 0.0])
         self.report = report
@@ -150,10 +153,19 @@ class Enemy(pygame.sprite.Sprite):
             self.ignition[1] = self.ignition[1] + (-1) * np.sign(self.ignition[1]) * self.ignitionstop
         else:
             self.ignition[1] = 0.0
-        #self.ignition = np.clip(self.ignition - np.array([self.ignitionstop, self.ignitionstop]), 0.0, 0.0)
 
     def __clipSpeed__(self):
         self.ignition = np.clip(self.ignition, -11.0, 11.0)
+
+    def __healthMonitor__(self):
+        if self.hMonitor > self.health:
+            self.hMinus = True
+        elif self.hMonitor < self.health:
+            self.hPlus = True
+        else:
+            self.hMinus = False
+            self.hPlus = False
+        self.hMonitor = self.health
 
     def move(self):
         self.rect.x = self.rect.x + self.speed[0] + self.bonusx + self.ignition[0]
@@ -162,6 +174,7 @@ class Enemy(pygame.sprite.Sprite):
         #    print self.speed[0], self.bonusx, self.ignition[0], "---", self.speed[0] + self.bonusx + self.ignition[0]
         #    print self.speed[1], self.bonusy, self.ignition[1], "---", self.speed[1] + self.bonusy + self.ignition[1]
         self.uptime = self.uptime + 0.01
+        self.__healthMonitor__()
         self.__wall__()
 
     def statusreport(self):
@@ -171,7 +184,7 @@ class Enemy(pygame.sprite.Sprite):
         return status
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Player(Enemy):
@@ -181,10 +194,10 @@ class Player(Enemy):
         super(Player, self).__init__(sandbox, color, report, width, height)
 
     def statusreport(self):
-        status = {"environment": self.environment, "class": "blockplayer", "x_position": self.rect.x,
+        status = {"live": self.live, "environment": self.environment, "class": "blockplayer", "x_position": self.rect.x,
                   "y_position": self.rect.y, "x_speed": self.speed[0], "y_speed": self.speed[1],
                   "x_speed_bonus": self.bonusx, "y_speed_bonus": self.bonusy, "health": self.health,
-                  "uptime": self.uptime}
+                  "uptime": self.uptime, "plus": self.hPlus, "minus": self.hMinus}
         return status
 
     def scan(self, list, type=None):
@@ -225,8 +238,12 @@ class Player(Enemy):
             decision = 8 - decision_bullet
         self.actions[decision]()
 
+    def randomAction(self):
+        rnd = np.random.randint(len(self.actions))
+        self.actions[rnd]()
 
-#---------------------------------------------------------------------#
+
+# ---------------------------------------------------------------------#
 
 
 class Health(pygame.sprite.Sprite):
@@ -259,7 +276,7 @@ class Health(pygame.sprite.Sprite):
         return status
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -306,7 +323,7 @@ class Bullet(pygame.sprite.Sprite):
         return status
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Collision(object):
@@ -324,7 +341,7 @@ class Collision(object):
                                 obj.heal(block)
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Agent(object):
@@ -335,7 +352,7 @@ class Agent(object):
         return agent
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Cleaner(object):
@@ -346,7 +363,7 @@ class Cleaner(object):
                 list.remove(block)
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class Global(object):
@@ -358,7 +375,7 @@ class Global(object):
         return status
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
 
 
 class allBox(object):
@@ -427,4 +444,4 @@ class allBox(object):
         return Global.report(self.all_list)
 
 
-#---------------------------------------------------------------------#
+# ---------------------------------------------------------------------#
