@@ -28,6 +28,7 @@ while True:
         state = box.oneStep(draw=True, brainType=None).getStatus()
         agent_state = (item for item in state if item["class"] == "blockplayer").next()
         features = Features.get(agent_state)
+        controller.oneStep(features, report=False)
         time.sleep(delay)
 
 
