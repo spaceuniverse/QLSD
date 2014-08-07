@@ -79,7 +79,7 @@ class Enemy(pygame.sprite.Sprite):
     def death(self):
         self.live = False
         if self.report:
-            print self.live, self.statusreport()
+            print self.statusreport()
 
     def fire(self):
         bullet = Bullet(self.sandbox, self.rect.x, self.rect.y)
@@ -332,8 +332,8 @@ class Collision(object):
         for block in list:
             if block.rect.x >= obj.rect.x:
                 if block.rect.y >= obj.rect.y:
-                    if block.rect.x <= obj.rect.x + obj.width:
-                        if block.rect.y <= obj.rect.y + obj.height:
+                    if block.rect.x < obj.rect.x + obj.width:
+                        if block.rect.y < obj.rect.y + obj.height:
                             block.death()
                             if type == "hit":
                                 obj.harassment(block)
@@ -359,7 +359,7 @@ class Cleaner(object):
     @staticmethod
     def clean(list):
         for block in list:
-            if block.live is False:
+            if block.live is False and block.statusreport()["class"] != "blockplayer":
                 list.remove(block)
 
 
@@ -401,13 +401,15 @@ class allBox(object):
             if event.type == pygame.QUIT:
                 sys.exit(0)
         self.window.fill(BLACK)
-        Cleaner.clean(self.all_list)
-        Cleaner.clean(self.bullet_list)
-        Cleaner.clean(self.health_list)
         if self.agent.live is False:
             self.all_list.remove(self.agent)
             self.agent = Agent.create(self.sand)
             self.all_list.add(self.agent)
+        Collision.test(self.bullet_list, self.agent, type="hit")
+        Collision.test(self.health_list, self.agent, type="heal")
+        Cleaner.clean(self.all_list)
+        Cleaner.clean(self.bullet_list)
+        Cleaner.clean(self.health_list)
         self.agent.clean()
         self.agent.scan(self.bullet_list, type="hit")
         self.agent.scan(self.health_list, type="heal")
@@ -416,8 +418,6 @@ class allBox(object):
             self.agent.brain(type="bulletdodge")
         for block in self.all_list:
             block.move()
-        Collision.test(self.bullet_list, self.agent, type="hit")
-        Collision.test(self.health_list, self.agent, type="heal")
         for block in self.enemy_list:
             np.random.shuffle(self.brain)
             if self.brain[0] == 0:
@@ -425,7 +425,7 @@ class allBox(object):
                 self.bullet_list.append(fire)
                 self.all_list.add(fire)
         np.random.shuffle(self.brain)
-        if self.brain[0] == 1:
+        if self.brain[0] == 0:
             apt = Health(self.sand)
             self.health_list.append(apt)
             self.all_list.add(apt)
