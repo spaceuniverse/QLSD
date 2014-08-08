@@ -16,9 +16,27 @@ class Features(object):
             vector = np.append(vector, int(objState["live"]))
             vector = np.append(vector, int(objState["plus"]))
             vector = np.append(vector, int(objState["minus"]))
+            vector = np.append(vector, objState["ignition"] / 22.0)  # 22 max value of ignition
         else:
             vector = None
         return vector
+
+
+class Rewards(object):
+    @staticmethod
+    def get(objVector):
+        reward = 0
+        for i in xrange(9):
+            if objVector[i] > 0:
+                reward -= 300 * objVector[i]
+        for i in xrange(9, 18):
+            if objVector[i] > 0:
+                reward += 300 * objVector[i]
+        if objVector[22] > 0:
+            reward -= 50 * objVector[22]
+        if objVector[22] == 0:
+            reward += 50
+        return reward
 
 
 # ---------------------------------------------------------------------#

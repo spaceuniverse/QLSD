@@ -197,7 +197,7 @@ class Player(Enemy):
         status = {"live": self.live, "environment": self.environment, "class": "blockplayer", "x_position": self.rect.x,
                   "y_position": self.rect.y, "x_speed": self.speed[0], "y_speed": self.speed[1],
                   "x_speed_bonus": self.bonusx, "y_speed_bonus": self.bonusy, "health": self.health,
-                  "uptime": self.uptime, "plus": self.hPlus, "minus": self.hMinus}
+                  "uptime": self.uptime, "plus": self.hPlus, "minus": self.hMinus, "ignition": np.sum(np.abs(self.ignition))}
         return status
 
     def scan(self, list, type=None):
@@ -347,7 +347,7 @@ class Collision(object):
 class Agent(object):
     @staticmethod
     def create(sand):
-        random = (np.random.randint(50, 100), np.random.randint(50, 100), np.random.randint(200, 250))
+        random = (np.random.randint(50, 100), np.random.randint(50, 100), np.random.randint(150, 250))
         agent = Player(sand, random, report=True)
         return agent
 
@@ -397,27 +397,35 @@ class allBox(object):
         self.brain = np.array(range(self.sand.firerate))
 
     def oneStep(self, draw=True, brainType=None):
+        # Closing app when window closed
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit(0)
+        # Fills canvas with black color
         self.window.fill(BLACK)
+        # Checks agent's live, if dead creates new one
         if self.agent.live is False:
             self.all_list.remove(self.agent)
             self.agent = Agent.create(self.sand)
             self.all_list.add(self.agent)
+        # Checks collisions agent with bullets or health boxes
         Collision.test(self.bullet_list, self.agent, type="hit")
         Collision.test(self.health_list, self.agent, type="heal")
+        # Cleans dead objects
         Cleaner.clean(self.all_list)
         Cleaner.clean(self.bullet_list)
         Cleaner.clean(self.health_list)
+        # Agent scans his environment for bullets or health
         self.agent.clean()
         self.agent.scan(self.bullet_list, type="hit")
         self.agent.scan(self.health_list, type="heal")
         if brainType == "ifelse":
             self.agent.brain(type="healcatch")
             self.agent.brain(type="bulletdodge")
+        # Moves all objects in scene and updates them
         for block in self.all_list:
             block.move()
+        # Creating new environment objects
         for block in self.enemy_list:
             np.random.shuffle(self.brain)
             if self.brain[0] == 0:
@@ -429,8 +437,10 @@ class allBox(object):
             apt = Health(self.sand)
             self.health_list.append(apt)
             self.all_list.add(apt)
+        # Reporting
         if self.sand.report:
             print len(self.all_list), len(self.enemy_list), len(self.bullet_list), len(self.health_list)
+        # Redraw canvas
         self.all_list.draw(self.window)
         if draw:
             self.clock.tick(60)
