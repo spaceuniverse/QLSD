@@ -419,6 +419,7 @@ class allBox(object):
         self.agent.clean()
         self.agent.scan(self.bullet_list, type="hit")
         self.agent.scan(self.health_list, type="heal")
+        # Built in brain with simple if-else rules
         if brainType == "ifelse":
             self.agent.brain(type="healcatch")
             self.agent.brain(type="bulletdodge")

@@ -27,7 +27,7 @@ class Controll(object):
 
     def wUpdate(self, Q1, Q2, F1, act_code, alpha=0.5):
         self.W[:, act_code] = self.W[:, act_code] + alpha * (Q2 - Q1[act_code]) * F1.T
-        print np.sum(self.W)
+        print "---------->", np.sum(self.W)
 
 
 # ---------------------------------------------------------------------#

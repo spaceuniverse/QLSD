@@ -26,12 +26,14 @@ class Rewards(object):
     @staticmethod
     def get(objVector):
         reward = 0
+        """
         for i in xrange(9):
             if objVector[i] > 0:
                 reward -= 300 * objVector[i]
         for i in xrange(9, 18):
             if objVector[i] > 0:
                 reward += 300 * objVector[i]
+        """
         if objVector[22] > 0:
             reward -= 50 * objVector[22]
         if objVector[22] == 0:
