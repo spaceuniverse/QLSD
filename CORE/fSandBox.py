@@ -23,7 +23,7 @@ BLUE = (0, 0, 255)
 class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
-        self.firerate = 60
+        self.firerate = 10  # 60
         self.enum = 7
         self.fun = True
         self.report = False
@@ -57,6 +57,7 @@ class Enemy(pygame.sprite.Sprite):
         self.report = report
         self.uptime = 0.0
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
+        self.environment_dist = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
         self.ignitionspeed = 0.5
         self.ignitionstop = 0.1
         self.vfield = 50.0
@@ -194,11 +195,16 @@ class Player(Enemy):
         super(Player, self).__init__(sandbox, color, report, width, height)
 
     def statusreport(self):
-        status = {"live": self.live, "environment": self.environment, "class": "blockplayer", "x_position": self.rect.x,
-                  "y_position": self.rect.y, "x_speed": self.speed[0], "y_speed": self.speed[1],
-                  "x_speed_bonus": self.bonusx, "y_speed_bonus": self.bonusy, "health": self.health,
-                  "uptime": self.uptime, "plus": self.hPlus, "minus": self.hMinus, "ignition": np.sum(np.abs(self.ignition))}
+        status = {"live": self.live, "environment": self.environment, "environment_dist": self.environment_dist,
+                  "class": "blockplayer", "x_position": self.rect.x, "y_position": self.rect.y,
+                  "x_speed": self.speed[0], "y_speed": self.speed[1], "x_speed_bonus": self.bonusx, "y_speed_bonus": self.bonusy,
+                  "health": self.health, "uptime": self.uptime, "plus": self.hPlus, "minus": self.hMinus,
+                  "ignition": np.sum(np.abs(self.ignition))}
         return status
+
+    def __getDistance__(self, a, b):
+        dst = np.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
+        return dst
 
     def scan(self, list, type=None):
         if type == "hit":
@@ -208,25 +214,35 @@ class Player(Enemy):
         for block in list:
             if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y - self.vfield <= block.rect.y < self.rect.y:
                 self.environment[t][0][0] += 1
+                self.environment_dist[t][0][0] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             if self.rect.x <= block.rect.x < self.rect.x + self.width and self.rect.y - self.vfield <= block.rect.y < self.rect.y:
                 self.environment[t][0][1] += 1
+                self.environment_dist[t][0][1] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y - self.vfield <= block.rect.y < self.rect.y:
                 self.environment[t][0][2] += 1
+                self.environment_dist[t][0][2] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y <= block.rect.y < self.rect.y + self.height:
                 self.environment[t][1][0] += 1
+                self.environment_dist[t][1][0] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             #if self.rect.x <= block.rect.x < self.rect.x + self.width and self.rect.y <= block.rect.y < self.rect.y + self.height:
             #    self.environment[t][1][1] += 1
+            #    self.environment_dist[t][1][1] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y <= block.rect.y < self.rect.y + self.height:
                 self.environment[t][1][2] += 1
+                self.environment_dist[t][1][2] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             if self.rect.x - self.vfield <= block.rect.x < self.rect.x and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
                 self.environment[t][2][0] += 1
+                self.environment_dist[t][2][0] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             if self.rect.x <= block.rect.x < self.rect.x + self.width and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
                 self.environment[t][2][1] += 1
+                self.environment_dist[t][2][1] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
             if self.rect.x + self.width <= block.rect.x < self.rect.x + self.width + self.vfield and self.rect.y + self.height <= block.rect.y < self.rect.y + self.height + self.vfield:
                 self.environment[t][2][2] += 1
+                self.environment_dist[t][2][2] += self.__getDistance__((self.rect.x, self.rect.y), (block.rect.x, block.rect.y))
 
     def clean(self):
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
+        self.environment_dist = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
 
     def brain(self, type=None):
         decision_heal = np.argmax(self.environment[1])
