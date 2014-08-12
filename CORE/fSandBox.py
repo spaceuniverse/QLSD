@@ -23,7 +23,7 @@ BLUE = (0, 0, 255)
 class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
-        self.firerate = 10  # 60
+        self.firerate = 30  # 60
         self.enum = 7
         self.fun = True
         self.report = False

@@ -37,14 +37,12 @@ class Rewards(object):
     def get(objVector, objVectorOld):
         reward = 0
         # Every square scan
-        """
         for i in xrange(9):
             if objVector[i] > 0:
-                reward -= 300 * objVector[i]
+                reward -= 200 * objVector[i]
         for i in xrange(9, 18):
             if objVector[i] > 0:
-                reward += 300 * objVector[i]
-        """
+                reward += 200 * objVector[i]
         # More complex
         # Reward for speed
         if objVector[22] > 0:
