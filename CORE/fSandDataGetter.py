@@ -22,7 +22,7 @@ def step():
 
 
 # Init sandbox
-epsilon = 0.6  # Chance of random or not action
+epsilon = 0.8  # Chance of random or not action
 delay = 0.0  # Delay for slow motion in debugging
 box = allBox()  # Sandbox creating
 a = box.getPlayer().actions  # Get list of actions
@@ -30,7 +30,7 @@ a_len = len(a)  # Get length of list of actions
 f = Features.get(box.getPlayer().statusreport())  # Get start state features
 controller = Controll(a, f, report=True)  # Q controller
 i = 0  # Iterator
-steps = 20000  # Number of training steps
+steps = 100000  # Number of training steps
 epsilon_inc = (1.0 - epsilon) / steps
 
 
@@ -39,7 +39,8 @@ while True:
     if i < steps:
         features = step()
         Q1, F1 = controller.oneStep(features)
-        if np.random.rand(1.0) < epsilon:
+        dsg = np.random.rand(1.0)[0]
+        if dsg < epsilon:
             act_code = np.argmax(Q1)
         else:
             act_code = np.random.randint(a_len)
@@ -47,7 +48,7 @@ while True:
         features = step()
         Q2, F2 = controller.twoStep(features, F1, act_code)
         controller.wUpdate(Q1, Q2, F1, act_code)
-        print i, epsilon, act_code
+        print i, dsg, epsilon, act_code
         i += 1
         epsilon += epsilon_inc
         time.sleep(delay)
