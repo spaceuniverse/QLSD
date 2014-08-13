@@ -39,9 +39,9 @@ class Controll(object):
             print "-------------------->", reward
         return Q, features
 
-    def wUpdate(self, Q1, Q2, F1, act_code, alpha=0.01):
+    def wUpdate(self, Q1, Q2, F1, act_code, alpha=0.1):
         self.W[:, act_code] = self.W[:, act_code] + alpha * (Q2 - Q1[act_code]) * F1.T
-        self.W = self.__wNormalize__(self.W)
+        #self.W = self.__wNormalize__(self.W)
         if self.report:
             print "-------------------->", np.sum(self.W)
 
