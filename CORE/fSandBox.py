@@ -63,8 +63,7 @@ class Enemy(pygame.sprite.Sprite):
         self.vfield = 50.0
 
     def harassment(self, bullet):
-        self.health = self.health - bullet.damage + (bullet.speed[0] - self.speed[0]) * 1.5 + (bullet.speed[1] -
-                                                                                               self.speed[1]) * 1.5
+        self.health = self.health - bullet.damage + (bullet.speed[0] - self.speed[0]) * 1.5 + (bullet.speed[1] - self.speed[1]) * 1.5
         self.bonusx = bullet.speed[0]
         self.bonusy = bullet.speed[1]
         if self.report:

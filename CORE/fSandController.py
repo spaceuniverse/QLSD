@@ -32,7 +32,7 @@ class Controll(object):
         return wfn
 
     def __updateMms__(self, derivative, act_code):
-        self.mms[:, act_code] = self.rms * self.mms[:, act_code] + (1.0 - self.rms) * (derivative ** 2)
+        self.mms[:, act_code] = (self.rms * self.mms[:, act_code] + (1.0 - self.rms) * (derivative ** 2)) * (derivative != 0) + self.rms * (derivative == 0)
         self.mms[:, act_code] = np.clip(self.mms[:, act_code], 1e-20, 1e+20)
 
     def oneStep(self, features):

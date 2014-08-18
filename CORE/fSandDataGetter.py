@@ -23,7 +23,7 @@ def step():
 
 
 # Init sandbox
-epsilon = 0.7  # Chance of random or not action
+epsilon = 0.75  # Chance of random or not action
 delay = 0.0  # Delay for slow motion in debugging
 box = allBox()  # Sandbox creating
 a = box.getPlayer().actions  # Get list of actions
@@ -31,7 +31,7 @@ a_len = len(a)  # Get length of list of actions
 f = Features.get(box.getPlayer().statusreport())  # Get start state features
 controller = Controll(a, f, report=True, rms=0.9)  # Q controller
 i = 0  # Iterator
-steps = 20000  # Number of training steps
+steps = 300000  # Number of training steps
 epsilon_inc = (1.0 - epsilon) / steps
 
 
