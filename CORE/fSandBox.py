@@ -202,7 +202,7 @@ class Player(Enemy):
                   "ignition": np.sum(np.abs(self.ignition))}
         return status
 
-    def __getDistance__(self, a, b):
+    def __getDistance__(self, a, b):  # Could be static
         dst = np.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
         return dst
 

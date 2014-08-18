@@ -29,7 +29,7 @@ box = allBox()  # Sandbox creating
 a = box.getPlayer().actions  # Get list of actions
 a_len = len(a)  # Get length of list of actions
 f = Features.get(box.getPlayer().statusreport())  # Get start state features
-controller = Controll(a, f, report=True)  # Q controller
+controller = Controll(a, f, report=True, rms=0.9)  # Q controller
 i = 0  # Iterator
 steps = 20000  # Number of training steps
 epsilon_inc = (1.0 - epsilon) / steps
@@ -52,7 +52,7 @@ while True:
         Q2, F2 = controller.twoStep(features, F1, act_code)
         controller.wUpdate(Q1, Q2, F1, act_code)
         # Updates
-        print i, dsg, epsilon, act_code
+        print i, dsg, epsilon, act_code, "\n"
         i += 1
         epsilon += epsilon_inc
         time.sleep(delay)
