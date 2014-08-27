@@ -24,7 +24,7 @@ class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
         self.firerate = 30  # 60
-        self.enum = 7
+        self.enum = 9
         self.fun = True
         self.report = False
 
@@ -58,8 +58,8 @@ class Enemy(pygame.sprite.Sprite):
         self.uptime = 0.0
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
         self.environment_dist = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
-        self.ignitionspeed = 0.5
-        self.ignitionstop = 0.1
+        self.ignitionspeed = 5.0  # / 10
+        self.ignitionstop = 1.0  # / 10
         self.vfield = 50.0
 
     def harassment(self, bullet):
@@ -168,8 +168,15 @@ class Enemy(pygame.sprite.Sprite):
         self.hMonitor = self.health
 
     def move(self):
-        self.rect.x = self.rect.x + self.speed[0] + self.bonusx + self.ignition[0]
-        self.rect.y = self.rect.y + self.speed[1] + self.bonusy + self.ignition[1]
+        # All
+        #self.rect.x = self.rect.x + self.speed[0] + self.bonusx + self.ignition[0]
+        #self.rect.y = self.rect.y + self.speed[1] + self.bonusy + self.ignition[1]
+        # Direct
+        self.rect.x = self.rect.x + self.ignition[0]
+        self.rect.y = self.rect.y + self.ignition[1]
+        # Direct and bullet bonus
+        #self.rect.x = self.rect.x + self.bonusx + self.ignition[0]
+        #self.rect.y = self.rect.y + self.bonusy + self.ignition[1]
         #if self.report:
         #    print self.speed[0], self.bonusx, self.ignition[0], "---", self.speed[0] + self.bonusx + self.ignition[0]
         #    print self.speed[1], self.bonusy, self.ignition[1], "---", self.speed[1] + self.bonusy + self.ignition[1]

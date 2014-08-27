@@ -33,6 +33,9 @@ class Rewards(object):
     @staticmethod
     def get(objVector, objVectorOld):
         reward = 0
+        rs = 0
+        rb = 0
+        rh = 0
         # Every square scan
         #for i in xrange(9):
         #    if objVector[i] > 0:
@@ -43,19 +46,29 @@ class Rewards(object):
         # More complex
         # Reward for speed
         if objVector[22] > 0:
-            reward -= 500.0 * objVector[22]
-        if objVector[22] == 0:
-            reward += 50
+            reward -= 10.0 * objVector[22]
+            rs -= 10.0 * objVector[22]
+        #if objVector[22] == 0:
+        #    reward += 10.0
+        #    rs += 10.0
+        print "RSpeed: ", rs
         # Reward for hit dist
         if objVector[20] < objVectorOld[20] and objVector[18] == objVectorOld[18]:
-            reward -= 100.0
+            reward -= 10000.0 * (np.abs(objVectorOld[20] - objVector[20]))
+            rb -= 10000.0 * (np.abs(objVectorOld[20] - objVector[20]))
         if objVector[20] > objVectorOld[20] and objVector[18] == objVectorOld[18]:
-            reward += 100.0
+            reward += 10000.0 * (np.abs(objVector[20] - objVectorOld[20]))
+            rb += 10000.0 * (np.abs(objVector[20] - objVectorOld[20]))
+        print "RBullet: ", rb
         # Reward for heal dist
         if objVector[21] > objVectorOld[21] and objVector[19] == objVectorOld[19]:
-            reward -= 100.0
+            reward -= 10000.0 * (np.abs(objVector[21] - objVectorOld[21]))
+            rh -= 10000.0 * (np.abs(objVector[21] - objVectorOld[21]))
         if objVector[21] < objVectorOld[21] and objVector[19] == objVectorOld[19]:
-            reward += 100.0
+            reward += 10000.0 * (np.abs(objVectorOld[21] - objVector[21]))
+            rh += 10000.0 * (np.abs(objVectorOld[21] - objVector[21]))
+        print "RHeal: ", rh
+        print reward, rs + rb + rh
         return reward
 
 
