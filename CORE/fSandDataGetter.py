@@ -35,11 +35,9 @@ steps = 200000  # Number of training steps 100000
 epsilon_inc = (1.0 - epsilon) / steps
 
 # Loading model
-"""
 file_type = ".npy"
 f = "./W" + file_type
 controller.W = np.load(f)
-"""
 print "\n", controller.W, "\n"
 
 # Main
