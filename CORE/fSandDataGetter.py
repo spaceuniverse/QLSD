@@ -21,7 +21,6 @@ def step():
     features = Features.get(agent_state)
     return features
 
-
 # Init sandbox
 epsilon = 0.7  # Chance of random or not action
 delay = 0.0  # Delay for slow motion in debugging
@@ -35,9 +34,11 @@ steps = 200000  # Number of training steps 100000
 epsilon_inc = (1.0 - epsilon) / steps
 
 # Loading model
+"""
 file_type = ".npy"
 f = "./W" + file_type
 controller.W = np.load(f)
+"""
 print "\n", controller.W, "\n"
 
 # Main
@@ -65,7 +66,7 @@ while True:
         epsilon += epsilon_inc
         time.sleep(delay)
     elif i == steps:
-        f = "./W"
+        f = "./Wplus"
         np.save(f, controller.W)
         print "\n", controller.W, "\n"
         print "\nSAVED\n"

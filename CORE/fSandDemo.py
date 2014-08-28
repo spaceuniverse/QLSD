@@ -29,7 +29,7 @@ controller = Controll(a, f, report=True, rms=0.9)  # Q controller
 
 # Loading model
 file_type = ".npy"
-f = "./W" + file_type
+f = "./Wplus" + file_type
 controller.W = np.load(f)
 print "\n", controller.W, "\n"
 
@@ -37,8 +37,10 @@ print "\n", controller.W, "\n"
 while True:
     features = step()
     Q1, F1 = controller.oneStep(features)
+    """
     if F1[18] + F1[19] == 0 and F1[22] == 0:
         Q1 = Q1 * np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0]) + np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+    """
     print Q1, F1[18] + F1[19]
     act_code = np.argmax(Q1)
     print act_code

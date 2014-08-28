@@ -33,6 +33,12 @@ class Features(object):
             vector = np.append(vector, np.sum(objState["environment_dist"][0]) / 1000.0)  # Hit dist; max range for 1 obj is 100 and 8 zones; *20 *2 /800.0
             vector = np.append(vector, np.sum(objState["environment_dist"][1]) / 1000.0)  # Heal dist; *21 *3 /800.0
             vector = np.append(vector, objState["ignition"] / 100.0)  # 22 max value of ignition; *22 *4 /22.0
+            #"""
+            if objState["ignition"] == 0.0:
+                vector = np.append(vector, 0.1)
+            else:
+                vector = np.append(vector, 0.0)
+            #"""
             #vector = Features.normal(vector)
             #print "Vector: ", vector
         else:
