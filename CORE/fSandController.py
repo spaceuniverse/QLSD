@@ -49,6 +49,7 @@ class Controll(object):
         return Q, features
 
     def wUpdate(self, Q1, Q2, F1, act_code, alpha=0.1):
+        print Q2, Q1[act_code], F1.T
         derivative = (Q2 - Q1[act_code]) * F1.T
         print derivative, derivative.shape
         if self.rms:

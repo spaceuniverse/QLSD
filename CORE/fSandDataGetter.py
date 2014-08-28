@@ -31,9 +31,16 @@ a_len = len(a)  # Get length of list of actions
 f = Features.get(box.getPlayer().statusreport())  # Get start state features
 controller = Controll(a, f, report=True, rms=0.9)  # Q controller
 i = 0  # Iterator
-steps = 100000  # Number of training steps
+steps = 200000  # Number of training steps 100000
 epsilon_inc = (1.0 - epsilon) / steps
 
+# Loading model
+"""
+file_type = ".npy"
+f = "./W" + file_type
+controller.W = np.load(f)
+"""
+print "\n", controller.W, "\n"
 
 # Main
 while True:
@@ -59,6 +66,12 @@ while True:
         i += 1
         epsilon += epsilon_inc
         time.sleep(delay)
+    elif i == steps:
+        f = "./W"
+        np.save(f, controller.W)
+        print "\n", controller.W, "\n"
+        print "\nSAVED\n"
+        i += 1
     else:
         features = step()
         Q1, F1 = controller.oneStep(features)

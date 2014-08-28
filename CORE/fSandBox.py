@@ -24,7 +24,7 @@ class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
         self.firerate = 30  # 60
-        self.enum = 9
+        self.enum = 13
         self.fun = True
         self.report = False
 
