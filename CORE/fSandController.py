@@ -35,11 +35,11 @@ class Controll(object):
         self.mms[:, act_code] = (self.rms * self.mms[:, act_code] + (1.0 - self.rms) * (derivative ** 2)) * (derivative != 0) + self.rms * (derivative == 0)
         self.mms[:, act_code] = np.clip(self.mms[:, act_code], 1e-20, 1e+20)
 
-    def __wDecay__(self, weights, decay=0.00000000):
+    def __wDecay__(self, weights, decay=1e-5):
         #wsum = np.sum(weights ** 2)
         #regularize = decay / 2 * wsum
-        wsum = np.sum(weights)
-        regularize = decay * wsum
+        #wsum = np.sum(weights)
+        regularize = decay * weights
         return regularize
 
     def oneStep(self, features):
@@ -56,17 +56,17 @@ class Controll(object):
         return Q, features
 
     def wUpdate(self, Q1, Q2, F1, act_code, alpha=0.1):
-        print Q2, Q1[act_code], F1.T
+        print Q2, Q1[act_code], F1.T, F1.T.shape,
         regularize = self.__wDecay__(self.W[:, act_code])
-        print regularize
-        derivative = (Q2 - Q1[act_code]) * F1.T
+        print regularize, regularize.shape
+        derivative = -(Q2 - Q1[act_code]) * F1.T + regularize
         print derivative, derivative.shape
         if self.rms:
             self.__updateMms__(derivative, act_code)
-            updater = alpha * derivative / np.sqrt(self.mms[:, act_code])
+            updater = derivative / np.sqrt(self.mms[:, act_code])
         else:
-            updater = alpha * derivative  # -
-        self.W[:, act_code] = self.W[:, act_code] + updater  # - alpha * regularize
+            updater = derivative
+        self.W[:, act_code] = self.W[:, act_code] - alpha * updater
         print self.mms[:, act_code]
         print updater, updater.shape
         if self.report:

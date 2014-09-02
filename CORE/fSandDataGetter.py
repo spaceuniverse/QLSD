@@ -66,7 +66,7 @@ while True:
         epsilon += epsilon_inc
         time.sleep(delay)
     elif i == steps:
-        f = "./W_final"
+        f = "./W_final_wd"
         np.save(f, controller.W)
         print "\n", controller.W, "\n"
         print "\nSAVED\n"
