@@ -56,19 +56,19 @@ class Controll(object):
         return Q, features
 
     def wUpdate(self, Q1, Q2, F1, act_code, alpha=0.1):
-        print Q2, Q1[act_code], F1.T, F1.T.shape,
+        print "Q2 Q1 F1.T", Q2, Q1[act_code], F1.T, F1.T.shape,
         regularize = self.__wDecay__(self.W[:, act_code])
-        print regularize, regularize.shape
+        print "WD", regularize, regularize.shape
         derivative = -(Q2 - Q1[act_code]) * F1.T + regularize
-        print derivative, derivative.shape
+        print "DER", derivative, derivative.shape
         if self.rms:
             self.__updateMms__(derivative, act_code)
             updater = derivative / np.sqrt(self.mms[:, act_code])
         else:
             updater = derivative
         self.W[:, act_code] = self.W[:, act_code] - alpha * updater
-        print self.mms[:, act_code]
-        print updater, updater.shape
+        print "MMS", self.mms[:, act_code]
+        print "UPDATER", alpha * updater, updater.shape
         if self.report:
             print "------------------------ Sum(W) --->", np.sum(self.W)
 
