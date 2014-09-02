@@ -10,7 +10,7 @@ Files:
 - fSandController - Q controller
 - fSandFun - features extraction and support functions
 - fSandDemo - final model working demonstration. Run it for demo!
-- W - model in numPy format
+- W_iterations#_features# - model in numPy format
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -33,6 +33,6 @@ _______
 |3|4|5|
 |6|7|8|
 ___
-|9|
+|9| Stop
 
 -----------------------------------------------------------------------------

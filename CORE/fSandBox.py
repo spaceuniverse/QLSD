@@ -23,7 +23,7 @@ BLUE = (0, 0, 255)
 class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
-        self.firerate = 30  # 60
+        self.firerate = 30  # 60 30
         self.enum = 13
         self.fun = True
         self.report = False
@@ -172,8 +172,11 @@ class Enemy(pygame.sprite.Sprite):
         #self.rect.x = self.rect.x + self.speed[0] + self.bonusx + self.ignition[0]
         #self.rect.y = self.rect.y + self.speed[1] + self.bonusy + self.ignition[1]
         # Direct
-        self.rect.x = self.rect.x + self.ignition[0]
-        self.rect.y = self.rect.y + self.ignition[1]
+        #self.rect.x = self.rect.x + self.ignition[0]
+        #self.rect.y = self.rect.y + self.ignition[1]
+        # Direct and random
+        self.rect.x = self.rect.x + self.speed[0] + self.ignition[0]
+        self.rect.y = self.rect.y + self.speed[1] + self.ignition[1]
         # Direct and bullet bonus
         #self.rect.x = self.rect.x + self.bonusx + self.ignition[0]
         #self.rect.y = self.rect.y + self.bonusy + self.ignition[1]
@@ -310,7 +313,9 @@ class Bullet(pygame.sprite.Sprite):
         self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.live = True
-        self.speed = np.array([-5, 5, 0, 4, -4, 3, -3, 2, -2, 1, -1])
+        #self.speed = np.array([-5, 5, 0, 4, -4, 3, -3, 2, -2, 1, -1])
+        # For train
+        self.speed = np.array([-1, 0, 1, 2, -2])
         np.random.shuffle(self.speed)
         self.sandbox = sandbox
         self.rect.x = x  # + 8

@@ -34,7 +34,7 @@ class Features(object):
             vector = np.append(vector, np.sum(objState["environment_dist"][1]) / 1000.0)  # Heal dist; *21 *3 /800.0
             vector = np.append(vector, objState["ignition"] / 100.0)  # 22 max value of ignition; *22 *4 /22.0
             #"""
-            if objState["ignition"] == 0.0:
+            if objState["ignition"] / 100.0 == 0.0 and np.sum(objState["environment"] / 10.0) == 0.0:
                 vector = np.append(vector, 0.1)
             else:
                 vector = np.append(vector, 0.0)
@@ -76,14 +76,20 @@ class Rewards(object):
         if objVector[20] > objVectorOld[20] and objVector[18] == objVectorOld[18]:
             reward += 100000.0 * (np.abs(objVector[20] - objVectorOld[20]))
             rb += 100000.0 * (np.abs(objVector[20] - objVectorOld[20]))
+        if objVector[20] == objVectorOld[20] and objVector[18] == objVectorOld[18] and objVector[18] != 0:
+            reward -= 100.0
+            rb -= 100.0
         print "RBullet: ", rb
         # Reward for heal dist
-        if objVector[21] >= objVectorOld[21] and objVector[19] == objVectorOld[19]:
+        if objVector[21] > objVectorOld[21] and objVector[19] == objVectorOld[19]:
             reward -= 100000.0 * (np.abs(objVector[21] - objVectorOld[21]))
             rh -= 100000.0 * (np.abs(objVector[21] - objVectorOld[21]))
         if objVector[21] < objVectorOld[21] and objVector[19] == objVectorOld[19]:
             reward += 100000.0 * (np.abs(objVectorOld[21] - objVector[21]))
             rh += 100000.0 * (np.abs(objVectorOld[21] - objVector[21]))
+        if objVector[21] == objVectorOld[21] and objVector[19] == objVectorOld[19] and objVector[19] != 0:
+            reward -= 100.0
+            rh -= 100.0
         print "RHeal: ", rh
         print reward, rs + rb + rh
         return reward
