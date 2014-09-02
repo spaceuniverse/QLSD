@@ -23,7 +23,7 @@ BLUE = (0, 0, 255)
 class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
-        self.firerate = 30  # 60 30
+        self.firerate = 90  # 60 30 - train; 90 - demo
         self.enum = 13
         self.fun = True
         self.report = False
@@ -461,7 +461,7 @@ class allBox(object):
                 self.bullet_list.append(fire)
                 self.all_list.add(fire)
         np.random.shuffle(self.brain)
-        if self.brain[0] == 0:
+        if self.brain[0] <= 5:
             apt = Health(self.sand)
             self.health_list.append(apt)
             self.all_list.add(apt)

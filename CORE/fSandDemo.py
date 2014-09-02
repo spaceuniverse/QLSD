@@ -11,10 +11,12 @@ from fSandController import *
 
 
 # ---------------------------------------------------------------------# MAIN
-
+brainType = None
 # brainType == "ifelse" for comparing with Q
+
+
 def step():
-    state = box.oneStep(draw=True, brainType=None).getStatus()
+    state = box.oneStep(draw=True, brainType=brainType).getStatus()
     agent_state = (item for item in state if item["class"] == "blockplayer").next()
     #print agent_state
     features = Features.get(agent_state)
@@ -29,22 +31,23 @@ controller = Controll(a, f, report=True, rms=0.9)  # Q controller
 
 # Loading model
 file_type = ".npy"
-f = "./W_2000k_24f_nowd_newrew" + file_type
+f = "./W_2000k_24f_wdwrong" + file_type
 controller.W = np.load(f)
 print "\n", controller.W, "\n"
 
 # Main
 while True:
     features = step()
-    Q1, F1 = controller.oneStep(features)
-    """
-    if F1[18] + F1[19] == 0 and F1[22] == 0:
-        Q1 = Q1 * np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0]) + np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
-    """
-    print Q1, F1[18] + F1[19]
-    act_code = np.argmax(Q1)
-    print act_code
-    box.getPlayer().actions[act_code]()
+    if brainType is None:
+        Q1, F1 = controller.oneStep(features)
+        """
+        if F1[18] + F1[19] == 0 and F1[22] == 0:
+            Q1 = Q1 * np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0]) + np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+        """
+        print Q1, F1[18] + F1[19]
+        act_code = np.argmax(Q1)
+        print act_code
+        box.getPlayer().actions[act_code]()
     time.sleep(delay)
 
 
