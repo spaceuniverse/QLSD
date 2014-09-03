@@ -23,7 +23,7 @@ BLUE = (0, 0, 255)
 class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
-        self.firerate = 90  # 60 30 - train; 90 - demo
+        self.firerate = 60  # 60 30 - train; 90 - demo
         self.enum = 13
         self.fun = True
         self.report = False
@@ -61,6 +61,7 @@ class Enemy(pygame.sprite.Sprite):
         self.ignitionspeed = 5.0  # / 10
         self.ignitionstop = 1.0  # / 10
         self.vfield = 50.0
+        self.trainmode = False
 
     def harassment(self, bullet):
         self.health = self.health - bullet.damage + (bullet.speed[0] - self.speed[0]) * 1.5 + (bullet.speed[1] - self.speed[1]) * 1.5
@@ -106,20 +107,28 @@ class Enemy(pygame.sprite.Sprite):
             self.__shuffling_()
 
     def __move_00__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[0] -= self.ignitionspeed
         self.ignition[1] -= self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_01__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[1] -= self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_02__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[0] += self.ignitionspeed
         self.ignition[1] -= self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_10__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[0] -= self.ignitionspeed
         self.__clipSpeed__()
 
@@ -127,22 +136,34 @@ class Enemy(pygame.sprite.Sprite):
         self.__clipSpeed__()
 
     def __move_12__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[0] += self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_20__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[0] -= self.ignitionspeed
         self.ignition[1] += self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_21__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[1] += self.ignitionspeed
         self.__clipSpeed__()
 
     def __move_22__(self):
+        if self.trainmode:
+            self.__momentalStop__()
         self.ignition[0] += self.ignitionspeed
         self.ignition[1] += self.ignitionspeed
         self.__clipSpeed__()
+
+    def __momentalStop__(self):
+        self.ignition[0] = 0.0
+        self.ignition[1] = 0.0
 
     def __stop__(self):
         if np.absolute(self.ignition[0]) >= self.ignitionstop:
@@ -461,7 +482,7 @@ class allBox(object):
                 self.bullet_list.append(fire)
                 self.all_list.add(fire)
         np.random.shuffle(self.brain)
-        if self.brain[0] <= 5:
+        if self.brain[0] <= 2:
             apt = Health(self.sand)
             self.health_list.append(apt)
             self.all_list.add(apt)
