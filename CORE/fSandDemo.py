@@ -31,7 +31,7 @@ controller = Controll(a, f, report=True, rms=0.9)  # Q controller
 
 # Loading model
 file_type = ".npy"
-f = "./W_final_wd" + file_type
+f = "./W_final_wd_stoper" + file_type
 controller.W = np.load(f)
 print "\n", controller.W, "\n"
 
