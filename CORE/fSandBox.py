@@ -61,7 +61,7 @@ class Enemy(pygame.sprite.Sprite):
         self.ignitionspeed = 5.0  # / 10
         self.ignitionstop = 1.0  # / 10
         self.vfield = 50.0
-        self.trainmode = False
+        self.trainmode = True
 
     def harassment(self, bullet):
         self.health = self.health - bullet.damage + (bullet.speed[0] - self.speed[0]) * 1.5 + (bullet.speed[1] - self.speed[1]) * 1.5
