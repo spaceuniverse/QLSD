@@ -24,7 +24,7 @@ class Sand(object):
     def __init__(self):
         self.screen = (800, 600)
         self.firerate = 60  # 60 30 - train; 90 - demo
-        self.enum = 13
+        self.enum = 7  # 13
         self.fun = True
         self.report = False
 
@@ -58,10 +58,10 @@ class Enemy(pygame.sprite.Sprite):
         self.uptime = 0.0
         self.environment = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
         self.environment_dist = np.array([[[0, 0, 0], [0, 0, 0], [0, 0, 0]], [[0, 0, 0], [0, 0, 0], [0, 0, 0]]])
-        self.ignitionspeed = 5.0  # / 10
-        self.ignitionstop = 1.0  # / 10
+        self.ignitionspeed = 5.0  # 5.0 / 10
+        self.ignitionstop = 1.0  # 1.0 / 10
         self.vfield = 50.0
-        self.trainmode = True
+        self.trainmode = True  # True
 
     def harassment(self, bullet):
         self.health = self.health - bullet.damage + (bullet.speed[0] - self.speed[0]) * 1.5 + (bullet.speed[1] - self.speed[1]) * 1.5
@@ -176,7 +176,8 @@ class Enemy(pygame.sprite.Sprite):
             self.ignition[1] = 0.0
 
     def __clipSpeed__(self):
-        self.ignition = np.clip(self.ignition, -11.0, 11.0)
+        #self.ignition = np.clip(self.ignition, -11.0, 11.0)
+        self.ignition = np.clip(self.ignition, -5.0, 5.0)
 
     def __healthMonitor__(self):
         if self.hMonitor > self.health:
