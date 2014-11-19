@@ -50,7 +50,7 @@ class Controll(object):
     def twoStep(self, features, featuresold, act_code, gamma=0.9):
         features = features.reshape(-1, 1)
         reward = Rewards.get(features, featuresold)
-        Q = reward + gamma * np.sum(self.W[:, act_code] * features.T)
+        Q = reward + gamma * np.max(np.sum(self.W * features, axis=0))  # Old np.sum(self.W[:, act_code] * features.T)
         if self.report:
             print "------------------------ Reward --->", reward
         return Q, features
