@@ -36,3 +36,10 @@ ___
 |9| Stop
 
 -----------------------------------------------------------------------------
+Final models:
+W_final_wd_stoper_3.npy - 7M iterations | Max fixed | Direct control | Without inertia | Final
+W_final_wd_stoper_4.npy - 2M iterations | Max fixed | Direct control | Without inertia | Final
+W_final_wd_stoper_2.npy - 7M iterations | Max NOT fixed | Direct control | Without inertia | Final
+
+All other models are not final and just for comparing
+-----------------------------------------------------------------------------
