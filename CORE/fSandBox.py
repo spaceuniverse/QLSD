@@ -444,8 +444,10 @@ class allBox(object):
         self.all_list.add(self.agent)
         self.clock = pygame.time.Clock()
         self.brain = np.array(range(self.sand.firerate))
+        # Counter for screenSave
+        self.counter = 0
 
-    def oneStep(self, draw=True, brainType=None):
+    def oneStep(self, draw=True, brainType=None, screenSave=False):
         # Closing app when window closed
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -495,6 +497,14 @@ class allBox(object):
         if draw:
             self.clock.tick(60)
             pygame.display.update()
+        if screenSave:
+            # http://stackoverflow.com/questions/17267395/how-to-take-screenshot-of-certain-part-of-screen-in-pygame
+            agent_rect = pygame.Rect(self.agent.rect.x - self.agent.vfield, self.agent.rect.y - self.agent.vfield, self.agent.rect.x + self.agent.width + self.agent.vfield, self.agent.rect.y + self.agent.height + self.agent.vfield)
+            scr_s = int(self.agent.vfield * 2 + self.agent.width), int(self.agent.vfield * 2 + self.agent.height)
+            screenshot = pygame.Surface(scr_s)
+            screenshot.blit(self.window, (0,0), area=agent_rect)
+            pygame.image.save(screenshot, "../img/scr/screenshot" + str(self.counter) + ".jpg")
+            self.counter += 1
         return self
 
     def getPlayer(self):
