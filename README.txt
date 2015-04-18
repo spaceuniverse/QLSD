@@ -23,7 +23,9 @@ Files:
 Dependencies:
 - NumPy
 - PyGame
-- Common sense
+- Pillow
+- - libjpeg-dev (before Pillow on Ubuntu)
+- Common sense (=
 
 -----------------------------------------------------------------------------
 
