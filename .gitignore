@@ -30,6 +30,7 @@ local.properties
 
 # Private folders ^_^
 .idea/
+img/scr/tst/
 
 #################
 ## Visual Studio
