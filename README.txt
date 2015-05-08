@@ -1,26 +1,32 @@
 -----------------------------------------------------------------------------
 
-Q-learning sandbox
+Q-Learning SanDbox (QLSD)
 
 -----------------------------------------------------------------------------
-
-Files:
-- fSandDataGetter.py - loop which produces one step in the sandbox world. Run it for train!
-- fSandBox.py - main class contains all sandbox world and creatures
-- fSandController - Q controller
-- fSandFun - features extraction and support functions
-- fSandDemo - final model working demonstration. Run it for demo!
-- W_iterations#_features# - model in numPy format
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
------------------------------------------------------------------------------
-!!! Please, don't cut this files, just make somewhere copy in test folder !!!
+Files
 -----------------------------------------------------------------------------
 
-- /test - folder with experiments
+./CORE/
 
-Dependencies:
+- fSandDataGetter.py - loop which produces one step in the sandbox world; !!!Run it for train!!!
+- fSandBox.py - main class contains all sandbox world and creatures;
+- fSandController - Q controller;
+- fSandFun - features extraction and support functions;
+- fSandDemo* - final model working demonstration; !!!Run it for demo!!!
+
+./CORE/models/
+
+- W_iterations#_features# - model in numPy format;
+
+./test/ - folder with experiments;
+./img/ - folder with screenshots and media;
+
+./CORE/deepmode/ - deep learning model based on neural networks;
+
+-----------------------------------------------------------------------------
+Dependencies
+-----------------------------------------------------------------------------
+
 - NumPy
 - PyGame
 - Pillow
@@ -28,8 +34,9 @@ Dependencies:
 - Common sense (=
 
 -----------------------------------------------------------------------------
+Actions
+-----------------------------------------------------------------------------
 
-Actions:
 _______
 |0|1|2|
 |3|4|5|
@@ -38,7 +45,9 @@ ___
 |9| Stop
 
 -----------------------------------------------------------------------------
-Final models:
+Final models
+-----------------------------------------------------------------------------
+
 W_final_wd_stoper_3.npy - 7M iterations | Max fixed | Direct control | Without inertia | Final
 W_final_wd_stoper_4.npy - 2M iterations | Max fixed | Direct control | Without inertia | Final
 W_final_wd_stoper_2.npy - 7M iterations | Max NOT fixed | Direct control | Without inertia | Final
